@@ -50,12 +50,21 @@ cpu_get_usage(cpu_options *opts)
     int i;
 
     FILE *fp;
+    char buf[1024];
     if (!(fp = fopen("/proc/stat", "r"))) {
 	perror("can't open /proc/stat");
 	exit(1);
     }
 
-    fscanf(fp, "%*s %d %d %d %d", &cpu, &nice, &system, &idle);
+    fread_unlocked (buf, 1024, 1, fp);
+    char *s = strchr(buf,' '); while (*s == ' ') s++;
+    cpu = atol(s);
+    s = strchr(s+1,' '); while (*s == ' ') s++;
+    nice = atol(s);
+    s = strchr(s+1,' '); while (*s == ' ') s++;
+    system = atol(s);
+    s = strchr(s+1,' '); while (*s == ' ') s++;
+    idle = atol(s);
 
 #ifdef USE_SMP
     if (opts->cpu_number >= 0) {
@@ -64,7 +73,7 @@ cpu_get_usage(cpu_options *opts)
 	    fprintf (stderr, "MAX CPU number that can be running in SMP is %d\n", NR_CPUS - 1);
 	    exit(1);
 	}
-	
+
 	for (i = 0; i <= opts->cpu_number; i++) {
 	    fscanf(fp, "%s %d %d %d %d", cpu_name, &cpu, &nice, &system, &idle);
 	    if (strncmp(cpu_name, "cpu", 3)){
@@ -108,9 +117,9 @@ cpu_get_usage(cpu_options *opts)
     pre_ig_used = ig_used;
     pre_used = used;
     pre_total = total;
-		
+
 		/* noberasco michele: quick hack
-		   on my machine cpu usage goes over 100, will have to tell 
+		   on my machine cpu usage goes over 100, will have to tell
 			 wmcpumon author about this                                 */
 		if (usage > 100) usage = 100;
 		/* end of quick hack */

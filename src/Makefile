@@ -1,6 +1,6 @@
 LIBS += -lXpm -lXext -lX11 -lm
 #CFLAGS = -g #-DMONDEBUG
-CFLAGS += -W -Wall -pedantic -DHI_INTS #undefine HI_INTS if not on x86 SMP or alpha
+CFLAGS += -O2 -W -Wno-unused-result -Wall -pedantic -DHI_INTS #undefine HI_INTS if not on x86 SMP or alpha
 
 PREFIX = /usr
 
