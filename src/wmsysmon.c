@@ -152,7 +152,7 @@ static void get_net_stats(long *in, long *out) {
 		int n;
 		s++;
 		*in = atol(s);
-		for (n=1; n<=9; n++) {
+		for (n=1; n<=8; n++) {
 		    s = strchr(s+1,' ');  while (*s == ' ') s++; // next ignored field
 		}
 		*out = atol(s);
