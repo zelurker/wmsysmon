@@ -178,19 +178,29 @@ static void DrawNet() {
     }
     double period = ms - last_time;
     static int last_pcin, last_pcout;
+    static int confirm_periods;
     if (period < 0.3) return;
     long in,out;
     get_net_stats(&in,&out);
     long tin = (in - last_in)/period;
     if (tin > max_in) {
+	if (confirm_periods < 1) {
+	    confirm_periods++;
+	    return;
+	}
 	max_in = tin;
 	fprintf(stderr,"max_in now %ld\n",max_in);
     }
     long tout = (out - last_out)/period;
     if (tout > max_out) {
+	if (confirm_periods < 1) {
+	    confirm_periods++;
+	    return;
+	}
 	max_out = tout;
 	fprintf(stderr,"max_out now %ld\n",max_out);
     }
+    confirm_periods = 0;
     int pcin = (tin*100)/max_in;
     int pcout = (tout*100)/max_out;
     if (pcin != last_pcin) {
