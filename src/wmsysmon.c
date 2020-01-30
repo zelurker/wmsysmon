@@ -275,8 +275,10 @@ int main(int argc, char *argv[])
 					    strncpy(intf,arg,20);
 					    sscanf(c+1,"%ld,%ld",&max_in,&max_out);
 					} else {
-					    usage();
-					    exit(1);
+					    // default values, just get the interface
+					    c = strchr(arg,' ');
+					    if (c) *c = 0;
+					    strncpy(intf,arg,20);
 					}
 					break;
  				case 'g':
