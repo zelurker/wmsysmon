@@ -11,6 +11,7 @@
 
 #include "wmgeneral.h"
 
+Display		*display;
 Window		Root;
 int		screen;
 int		x_fd;
@@ -46,7 +47,7 @@ static void GetXPM(XpmIcon *wmgen, char *pixmap_bytes[]) {
 	wmgen->dirty_y = wmgen->attributes.height;
 	wmgen->dirty_w = 0;
 	wmgen->dirty_h = 0;
-	
+
 	if (err != XpmSuccess) {
 		fprintf(stderr, "Not enough free colorcells.\n");
 		exit(1);
@@ -73,12 +74,12 @@ static Pixel GetColor(char *name) {
 
 
 void RedrawWindow(void) {
-	
+
 	if(wmgen.dirty_w && wmgen.dirty_h)
 	XCopyArea(display,
 		  wmgen.pixmap,
 		  iconwin,
-		  NormalGC, 
+		  NormalGC,
 		  wmgen.dirty_x,
 		  wmgen.dirty_y,
 		  wmgen.dirty_w,
@@ -116,8 +117,8 @@ void RedrawWindow(void) {
 
 
 void RedrawWindowXY(int x, int y) {
-	
-	XCopyArea(display, wmgen.pixmap, iconwin, NormalGC, 
+
+	XCopyArea(display, wmgen.pixmap, iconwin, NormalGC,
 				x, y, wmgen.attributes.width, wmgen.attributes.height, 0,0);
 	XCopyArea(display, wmgen.pixmap, win, NormalGC,
 				x, y, wmgen.attributes.width, wmgen.attributes.height, 0,0);
@@ -174,7 +175,7 @@ void createXBMfromXPM(char *xbm, char **xpm, int sx, int sy) {
     int		bcount;
     int     curpixel;
 
-	
+
 	sscanf(*xpm, "%d %d %d %d", &width, &height, &numcol, &depth);
 
 
@@ -183,7 +184,7 @@ void createXBMfromXPM(char *xbm, char **xpm, int sx, int sy) {
         zero <<=8;
         zero |= xpm[1][k];
     }
-        
+
 	for (i=numcol+1; i < numcol+sy+1; i++) {
 		bcount = 0;
 		bwrite = 0;
@@ -196,7 +197,7 @@ void createXBMfromXPM(char *xbm, char **xpm, int sx, int sy) {
                 curpixel <<=8;
                 curpixel |= xpm[i][j+k];
             }
-                
+
             if ( curpixel != zero ) {
 				bwrite += 128;
 			}
@@ -283,7 +284,7 @@ int openXwindow(int argc, char *argv[], char *pixmap_bytes[], char *pixmask_bits
 	}
 
 	if (!(display = XOpenDisplay(display_name))) {
-		fprintf(stderr, "%s: can't open display %s\n", 
+		fprintf(stderr, "%s: can't open display %s\n",
 						wname, XDisplayName(display_name));
 		return -1;
 	}
@@ -310,10 +311,10 @@ int openXwindow(int argc, char *argv[], char *pixmap_bytes[], char *pixmask_bits
 	mysizehints.width = 64;
 	mysizehints.height = 64;
 	DirtyWindow(0, 0, 64, 64);
-		
+
 	win = XCreateSimpleWindow(display, Root, mysizehints.x, mysizehints.y,
 				mysizehints.width, mysizehints.height, borderwidth, fore_pix, back_pix);
-	
+
 	iconwin = XCreateSimpleWindow(display, win, mysizehints.x, mysizehints.y,
 				mysizehints.width, mysizehints.height, borderwidth, fore_pix, back_pix);
 
@@ -334,7 +335,7 @@ int openXwindow(int argc, char *argv[], char *pixmap_bytes[], char *pixmask_bits
 	XSetWMName(display, win, &name);
 
 	/* Create GC for drawing */
-	
+
 	gcm = GCForeground | GCBackground | GCGraphicsExposures;
 	gcv.foreground = fore_pix;
 	gcv.background = back_pix;
