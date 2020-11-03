@@ -139,6 +139,7 @@ void DrawCpuPercentage( void );
 
 static void get_net_stats(long *in, long *out) {
     char buf[1024];
+    *in = 0; *out = 0; // in case we don't find the interface, it's better to return 0
     FILE *fp = fopen("/proc/net/dev","r");
     if (fp) {
 	char *s = buf;
@@ -151,6 +152,7 @@ static void get_net_stats(long *in, long *out) {
 	    if (!*intf || !strncmp(s-l,intf,l)) {
 		int n;
 		s++;
+		while (*s == ' ') s++;
 		*in = atol(s);
 		for (n=1; n<=8; n++) {
 		    s = strchr(s+1,' ');  while (*s == ' ') s++; // next ignored field
